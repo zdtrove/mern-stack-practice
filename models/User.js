@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-    name: {
+    userName: {
         type: String,
         required: true
     },
@@ -24,7 +24,7 @@ UserSchema.pre('save', function(next) {
             this.password = passwordHash;
             next();
         } else {
-            next("User exists");
+            next("Email already exists");
         }
     });
 });

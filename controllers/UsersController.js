@@ -7,13 +7,17 @@ module.exports = {
     register: async (req, res) => {
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            return res.status(400).json({ errors: result.array() });
+            let errs = {};
+            result.errors.forEach(err => {
+                errs[err.param] = err.msg;
+            });
+            return res.status(400).json({ errors: errs });
         }
         try {
-            const { name, email, password } = req.body;
-            const newUser = User({ name, email, password });
+            const { userName, email, password } = req.body;
+            const newUser = User({ userName, email, password });
             await newUser.save(err => {
-                if (err) return res.status(400).json({ errors: {msg: err} });
+                if (err) return res.status(400).json({ errors: {email: err} });
                 jwt.sign({ sub: newUser.id }, JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
                     if (err) throw err;
                     res.json({ token });
@@ -26,7 +30,11 @@ module.exports = {
     login: async (req, res) => {
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            return res.status(400).json({ errors: result.array() });
+            let errs = {};
+            result.errors.forEach(err => {
+                errs[err.param] = err.msg;
+            });
+            return res.status(400).json({ errors: errs });
         }
         const { email, password } = req.body;
         const user = await User.findOne({ email });
