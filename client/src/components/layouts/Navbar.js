@@ -4,11 +4,14 @@ import {
 	Toolbar,
 	Typography,
 	Button,
-	IconButton
+	IconButton,
+	Tooltip
 } from '@material-ui/core';
-import { Menu } from '@material-ui/icons';
+import { Menu, AccountCircle, ExitToApp } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { logout } from '../../redux/actions/AuthActions';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -22,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Navbar = () => {
+const Navbar = (props) => {
 	const classes = useStyles();
 	return <Fragment>
 		<div className={classes.root}>
@@ -32,12 +35,34 @@ const Navbar = () => {
 						<Menu />
 					</IconButton>
 					<Typography className={classes.title}>Home</Typography>
-					<Button color="inherit" component={Link} to='/login'>Login</Button>
-					<Button color="inherit" component={Link} to='/register'>Register</Button>
+					{
+						props.isAuthenticated ? (
+							<Fragment>
+								<Typography>Hello User</Typography>
+								<IconButton color="inherit">
+					                <AccountCircle />
+					            </IconButton>
+					            <Tooltip title="Logout" placement="bottom">
+					            	<IconButton onClick={() => props.logout()} color="inherit">
+					            		<ExitToApp />
+					            	</IconButton>
+					            </Tooltip>
+					        </Fragment>
+						) : (
+							<Fragment>
+								<Button color="inherit" component={Link} to='/login'>Login</Button>
+								<Button color="inherit" component={Link} to='/register'>Register</Button>
+							</Fragment>
+						)
+					}
 				</Toolbar>
 			</AppBar>
 		</div>
 	</Fragment>
 }
 
-export default Navbar;
+const mapStateToProps = state => ({
+	isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { logout })(Navbar);

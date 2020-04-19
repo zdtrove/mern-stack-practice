@@ -5,3 +5,6 @@ export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const SET_ERROR = 'SET_ERROR';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const LOGOUT = 'LOGOUT';
+export const SET_AUTHENTICATED = 'SET_AUTHENTICATED';
+export const LOAD_USER = 'LOAD_USER';
+export const LOAD_USER_ERROR = 'LOAD_USER_ERROR';

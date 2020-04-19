@@ -15,6 +15,21 @@ const config = {
 	}
 }
 
+export const loadUser = () => async dispatch => {
+	try {
+		const res = axios.get('/api/users', config);
+		dispatch({
+			type: LOAD_USER,
+			payload: res.data
+		});
+	} catch (err) {
+		dispatch({
+			type: LOAD_USER_ERROR,
+			payload: err.response.data.errors
+		});
+	}
+}
+
 export const register = userData => async dispatch => {
 	try {
 		const res = await axios.post('/api/users/register', userData, config);
@@ -32,7 +47,7 @@ export const register = userData => async dispatch => {
 
 export const login = userData => async dispatch => {
 	try {
-		const res = await axios.post('/api/users/register', userData, config);
+		const res = await axios.post('/api/users/login', userData, config);
 		dispatch({
 			type: LOGIN_SUCCESS,
 			payload: res.data
@@ -40,7 +55,7 @@ export const login = userData => async dispatch => {
 	} catch (err) {
 		dispatch({
 			type: LOGIN_FAIL,
-			payload: err
+			payload: err.response.data.errors
 		});
 	}
 }
@@ -52,10 +67,9 @@ export const setError = err => dispatch => {
 	});
 }
 
-export const clearError = err => dispatch => {
+export const clearError = () => dispatch => {
 	dispatch({
-		type: CLEAR_ERROR,
-		payload: err
+		type: CLEAR_ERROR
 	});
 }
 

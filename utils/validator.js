@@ -21,6 +21,13 @@ module.exports = {
 		    check('passwordConfirm', 'Please provide 6 character long passwordConfirm').isLength({min: 6}),
 		    check('passwordConfirm', 'Please provide a passwordConfirm shoter than 32 characters').isLength({max: 32}),
 		    check('passwordConfirm', 'Please provide a passwordConfirm').not().isEmpty()
-		]
+		];
+	},
+	validateLogin: () => {
+		return [
+			check('email', 'Invalid email address').isEmail(),
+			check('email', 'Please provide an email').not().isEmpty(),
+		    check('password', 'Please provide a password').not().isEmpty()
+		];
 	}
 }

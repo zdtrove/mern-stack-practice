@@ -10,10 +10,16 @@ import themeFile from './utils/theme';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-// import axios from 'axios';
+import { SET_AUTHENTICATED } from './redux/types';
+import axios from 'axios';
 
 const theme = createMuiTheme(themeFile);
 // axios.defaults.baseURL = 'http://localhost:5000';
+
+if (localStorage.token) {
+	store.dispatch({ type: SET_AUTHENTICATED });
+	axios.defaults.headers.common['Authorization'] = localStorage.token;
+} else delete axios.defaults.headers.common['Authorization'];
 
 
 function App() {

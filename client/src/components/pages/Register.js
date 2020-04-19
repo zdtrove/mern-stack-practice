@@ -40,9 +40,9 @@ const useStyles = makeStyles((theme) => ({
 const Register = (props) => {
 	const classes = useStyles();
 	React.useEffect(() => {
-		if (props.isAuthenticated === true) {
+		if (props.isAuthenticated === true || localStorage.token) {
 			props.history.push('/');
-		} else props.clearError(null);
+		} else props.clearError();
 		// eslint-disable-next-line
 	}, [props.isAuthenticated, props.history]);
 	const [user, setUser] = React.useState({
@@ -61,14 +61,14 @@ const Register = (props) => {
 		let errs = { ...props.errors };
 		if (!isEmpty(value)) delete errs[name];
 		else errs[name] = `Please provide ${name} field`;
-		if (name === 'userName') {
+		if (name === 'userName' && !isEmpty(value)) {
 			if (!isLength(value, {min: 3})) errs[name] = `Please provide 3 character long ${name}`;
 			if (!isLength(value, {max: 24})) errs[name] = `Please provide a ${name} shorter than 24 characters`;
 		}
-		if (name === 'email') {
+		if (name === 'email' && !isEmpty(value)) {
 			if (!isEmail(value)) errs[name] = 'Invalid email address';
 		}
-		if (name === 'password' || name === 'passwordConfirm') {
+		if ((name === 'password' || name === 'passwordConfirm') && !isEmpty(value)) {
 			if (!isLength(value, {min: 6})) errs[name] = `Please provide 6 character long ${name}`;
 			if (!isLength(value, {max: 32})) errs[name] = `Please provide a ${name} shorter than 32 characters`;
 		}
