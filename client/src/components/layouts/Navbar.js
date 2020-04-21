@@ -38,7 +38,8 @@ const Navbar = (props) => {
 					{
 						props.isAuthenticated ? (
 							<Fragment>
-								<Typography>Hello User</Typography>
+								<Button color="inherit" component={Link} to='/product'>Product</Button>
+								<Typography>Hello, { props.user && props.user.userName }</Typography>
 								<IconButton color="inherit">
 					                <AccountCircle />
 					            </IconButton>
@@ -62,7 +63,8 @@ const Navbar = (props) => {
 }
 
 const mapStateToProps = state => ({
-	isAuthenticated: state.auth.isAuthenticated
+	isAuthenticated: state.auth.isAuthenticated,
+	user: state.auth.user
 });
 
 export default connect(mapStateToProps, { logout })(Navbar);

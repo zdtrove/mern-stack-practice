@@ -4,6 +4,7 @@ import './App.css';
 import Home from './components/pages/Home';
 import Register from './components/pages/Register';
 import Login from './components/pages/Login';
+import Product from './components/pages/Product';
 import Notfound from './components/pages/Notfound';
 import Navbar from './components/layouts/Navbar';
 import themeFile from './utils/theme';
@@ -32,6 +33,7 @@ function App() {
 		        		<Route exact path='/' component={Home} />
 		        		<Route exact path='/register' component={Register} />
 		        		<Route exact path='/login' component={Login} />
+		        		<Route exact path='/product' component={Product} />
 		        		<Route component={Notfound} />
 		        	</Switch>
 		        </Router>

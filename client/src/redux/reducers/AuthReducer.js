@@ -8,7 +8,9 @@ import {
 	LOGOUT,
 	SET_AUTHENTICATED,
 	LOAD_USER,
-	LOAD_USER_ERROR
+	LOAD_ALL_USERS,
+	LOAD_USER_ERROR,
+	LOAD_ALL_USERS_ERROR
 } from '../types';
 
 const initialState = {
@@ -30,6 +32,11 @@ export default function (state = initialState, {type, payload}) {
 				...state,
 				user: payload
 			}
+		case LOAD_ALL_USERS:
+			return {
+				...state,
+				users: payload
+			}
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
 			localStorage.setItem('token', payload.token);
@@ -41,11 +48,17 @@ export default function (state = initialState, {type, payload}) {
 		case REGISTER_FAIL:
 		case LOGIN_FAIL:
 		case LOGOUT:
+		case LOAD_USER_ERROR:
 			localStorage.removeItem('token');
 			return {
 				...state,
 				isAuthenticated: false,
 				errors: payload
+			}
+		case LOAD_ALL_USERS_ERROR:
+			return {
+				...state,
+				users: null
 			}
 		case SET_ERROR:
 			return {
@@ -56,11 +69,6 @@ export default function (state = initialState, {type, payload}) {
 			return {
 				...state,
 				errors: null
-			}
-		case LOAD_USER_ERROR:
-			return {
-				...state,
-				user: null
 			}
 		default:
 			return state;

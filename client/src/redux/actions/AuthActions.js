@@ -5,7 +5,11 @@ import {
 	LOGIN_FAIL,
 	SET_ERROR,
 	CLEAR_ERROR,
-	LOGOUT
+	LOGOUT,
+	LOAD_USER,
+	LOAD_ALL_USERS,
+	LOAD_USER_ERROR,
+	LOAD_ALL_USERS_ERROR
 } from '../types';
 import axios from 'axios';
 
@@ -16,8 +20,11 @@ const config = {
 }
 
 export const loadUser = () => async dispatch => {
+	if (localStorage.token) {
+		axios.defaults.headers.common['Authorization'] = localStorage.token;
+	}
 	try {
-		const res = axios.get('/api/users', config);
+		const res = await axios.get('/api/users', config);
 		dispatch({
 			type: LOAD_USER,
 			payload: res.data
@@ -25,6 +32,24 @@ export const loadUser = () => async dispatch => {
 	} catch (err) {
 		dispatch({
 			type: LOAD_USER_ERROR,
+			payload: err.response.data.errors
+		});
+	}
+}
+
+export const loadAllUsers = () => async dispatch => {
+	if (localStorage.token) {
+		axios.defaults.headers.common['Authorization'] = localStorage.token;
+	}
+	try {
+		const res = await axios.get('/api/users/all', config);
+		dispatch({
+			type: LOAD_ALL_USERS,
+			payload: res.data
+		});
+	} catch (err) {
+		dispatch({
+			type: LOAD_ALL_USERS_ERROR,
 			payload: err.response.data.errors
 		});
 	}
