@@ -5,6 +5,7 @@ import Home from './components/pages/Home';
 import Register from './components/pages/Register';
 import Login from './components/pages/Login';
 import Product from './components/pages/Product';
+import UserDetail from './components/pages/UserDetail';
 import Notfound from './components/pages/Notfound';
 import Navbar from './components/layouts/Navbar';
 import themeFile from './utils/theme';
@@ -15,7 +16,7 @@ import { SET_AUTHENTICATED } from './redux/types';
 import axios from 'axios';
 
 const theme = createMuiTheme(themeFile);
-// axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'http://localhost:5000';
 
 if (localStorage.token) {
 	store.dispatch({ type: SET_AUTHENTICATED });
@@ -23,7 +24,7 @@ if (localStorage.token) {
 } else delete axios.defaults.headers.common['Authorization'];
 
 
-function App() {
+const App = () => {
     return (
         <MuiThemeProvider theme={theme}>
         	<Provider store={store}>
@@ -34,6 +35,7 @@ function App() {
 		        		<Route exact path='/register' component={Register} />
 		        		<Route exact path='/login' component={Login} />
 		        		<Route exact path='/product' component={Product} />
+		        		<Route exact path='/user/:userId' component={UserDetail} />
 		        		<Route component={Notfound} />
 		        	</Switch>
 		        </Router>

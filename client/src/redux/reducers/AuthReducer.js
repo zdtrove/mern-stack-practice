@@ -7,16 +7,23 @@ import {
 	CLEAR_ERROR,
 	LOGOUT,
 	SET_AUTHENTICATED,
-	LOAD_USER,
-	LOAD_ALL_USERS,
-	LOAD_USER_ERROR,
-	LOAD_ALL_USERS_ERROR
+	LOAD_AUTH,
+	GET_ALL_USERS,
+	LOAD_AUTH_ERROR,
+	GET_ALL_USERS_ERROR,
+	GET_USER,
+	GET_USER_ERROR,
+	UPDATE_USER,
+	UPDATE_USER_ERROR
 } from '../types';
 
 const initialState = {
+	loading: false,
 	isAuthenticated: false,
 	errors: null,
-	user: null
+	users: [],
+	user: {},
+	userDetail: {}
 }
 
 export default function (state = initialState, {type, payload}) {
@@ -27,15 +34,35 @@ export default function (state = initialState, {type, payload}) {
 				isAuthenticated: true,
 				errors: null
 			}
-		case LOAD_USER:
+		case LOAD_AUTH:
 			return {
 				...state,
 				user: payload
 			}
-		case LOAD_ALL_USERS:
+		case GET_ALL_USERS:
 			return {
 				...state,
 				users: payload
+			}
+		case GET_USER:
+			return {
+				...state,
+				userDetail: payload
+			}
+		case GET_USER_ERROR:
+			return {
+				...state,
+				userDetail: {}
+			}
+		case UPDATE_USER:
+			return {
+				...state,
+				userDetail: payload
+			}
+		case UPDATE_USER_ERROR:
+			return {
+				...state,
+				errors: payload
 			}
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
@@ -48,14 +75,15 @@ export default function (state = initialState, {type, payload}) {
 		case REGISTER_FAIL:
 		case LOGIN_FAIL:
 		case LOGOUT:
-		case LOAD_USER_ERROR:
+		case LOAD_AUTH_ERROR:
 			localStorage.removeItem('token');
 			return {
 				...state,
 				isAuthenticated: false,
-				errors: payload
+				errors: payload,
+				user: {}
 			}
-		case LOAD_ALL_USERS_ERROR:
+		case GET_ALL_USERS_ERROR:
 			return {
 				...state,
 				users: null

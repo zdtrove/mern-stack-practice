@@ -1,4 +1,5 @@
 const { check, body } = require('express-validator');
+const User = require('../models/User');
 
 module.exports = {
 	validateRegister: () => {
@@ -29,5 +30,19 @@ module.exports = {
 			check('email', 'Please provide an email').not().isEmpty(),
 		    check('password', 'Please provide a password').not().isEmpty()
 		];
-	}
+	},
+	validateUpdateUser: () => {
+		return [
+		    check('userName', 'Please provide a userName').not().isEmpty(),
+		    check('email', 'Invalid email address').isEmail(),
+		    check('email', 'Please provide an email').not().isEmpty().custom(async (value, { req }) => {
+				const user = await User.findOne({ email: value, _id: {$ne: req.params.userId} });
+				if (user) {
+					throw new Error("Email already in use");
+				} else {
+					return value;
+				}
+			})
+		];
+	},
 }

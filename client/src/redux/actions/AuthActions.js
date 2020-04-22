@@ -6,10 +6,14 @@ import {
 	SET_ERROR,
 	CLEAR_ERROR,
 	LOGOUT,
-	LOAD_USER,
-	LOAD_ALL_USERS,
-	LOAD_USER_ERROR,
-	LOAD_ALL_USERS_ERROR
+	LOAD_AUTH,
+	GET_ALL_USERS,
+	LOAD_AUTH_ERROR,
+	GET_ALL_USERS_ERROR,
+	GET_USER,
+	GET_USER_ERROR,
+	UPDATE_USER,
+	UPDATE_USER_ERROR
 } from '../types';
 import axios from 'axios';
 
@@ -19,37 +23,73 @@ const config = {
 	}
 }
 
-export const loadUser = () => async dispatch => {
+export const loadAuth = () => async dispatch => {
 	if (localStorage.token) {
 		axios.defaults.headers.common['Authorization'] = localStorage.token;
 	}
 	try {
-		const res = await axios.get('/api/users', config);
+		const res = await axios.get('/api/auth', config);
 		dispatch({
-			type: LOAD_USER,
+			type: LOAD_AUTH,
 			payload: res.data
 		});
 	} catch (err) {
 		dispatch({
-			type: LOAD_USER_ERROR,
+			type: LOAD_AUTH_ERROR,
 			payload: err.response.data.errors
 		});
 	}
 }
 
-export const loadAllUsers = () => async dispatch => {
+export const getUser = id => async dispatch => {
 	if (localStorage.token) {
 		axios.defaults.headers.common['Authorization'] = localStorage.token;
 	}
 	try {
-		const res = await axios.get('/api/users/all', config);
+		const res = await axios.get(`/api/auth/user/${id}`, config);
 		dispatch({
-			type: LOAD_ALL_USERS,
+			type: GET_USER,
 			payload: res.data
 		});
 	} catch (err) {
 		dispatch({
-			type: LOAD_ALL_USERS_ERROR,
+			type: GET_USER_ERROR,
+			payload: err.response.data.errors
+		});
+	}
+}
+
+export const updateUser = userData => async dispatch => {
+	if (localStorage.token) {
+		axios.defaults.headers.common['Authorization'] = localStorage.token;
+	}
+	try {
+		const res = await axios.put(`/api/auth/user/${userData._id}`, userData, config);
+		dispatch({
+			type: UPDATE_USER,
+			payload: res.data
+		});
+	} catch (err) {
+		dispatch({
+			type: UPDATE_USER_ERROR,
+			payload: err.response.data.errors
+		});
+	}
+}
+
+export const getUsers = () => async dispatch => {
+	if (localStorage.token) {
+		axios.defaults.headers.common['Authorization'] = localStorage.token;
+	}
+	try {
+		const res = await axios.get('/api/auth/users', config);
+		dispatch({
+			type: GET_ALL_USERS,
+			payload: res.data
+		});
+	} catch (err) {
+		dispatch({
+			type: GET_ALL_USERS_ERROR,
 			payload: err.response.data.errors
 		});
 	}
@@ -57,7 +97,7 @@ export const loadAllUsers = () => async dispatch => {
 
 export const register = userData => async dispatch => {
 	try {
-		const res = await axios.post('/api/users/register', userData, config);
+		const res = await axios.post('/api/auth/register', userData, config);
 		dispatch({
 			type: REGISTER_SUCCESS,
 			payload: res.data
@@ -72,7 +112,7 @@ export const register = userData => async dispatch => {
 
 export const login = userData => async dispatch => {
 	try {
-		const res = await axios.post('/api/users/login', userData, config);
+		const res = await axios.post('/api/auth/login', userData, config);
 		dispatch({
 			type: LOGIN_SUCCESS,
 			payload: res.data

@@ -29,7 +29,7 @@ const Navbar = (props) => {
 	const classes = useStyles();
 	return <Fragment>
 		<div className={classes.root}>
-			<AppBar position="static">
+			<AppBar position="fixed">
 				<Toolbar>
 					<IconButton to='/' component={Link} className={classes.menuButton}>
 						<Menu />
