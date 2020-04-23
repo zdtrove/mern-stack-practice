@@ -44,13 +44,42 @@ module.exports = {
         }
     },
     deleteUser: async (req, res) => {
-
+        try {
+            let user = await User.findById(req.params.userId);
+            if (!user) {
+                return res.status(HttpStatus.BAD_REQUEST).json({errors: {msg: 'User not found'}});
+            }
+            await User.findByIdAndRemove(req.params.userId);
+            res.json({success: {msg: 'User removed'}});
+        } catch (err) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({errors: {msg: 'Server Error'}});
+        }
     },
     getUsers: async (req, res) => {
         try {
             const users = await User.find().select("-password");
             res.json(users);
         } catch (err) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ errors: { msg: "Server Error" } });
+        }
+    },
+    insertUsers: async (req, res) => {
+        try {
+            let data = [];
+            for (let i = 1; i < 100; i++) {
+                data.push({
+                    userName: `user${i}`,
+                    email: `user${i}@gmail.com`,
+                    role: "user",
+                    gender: 1,
+                    location: "100 Vo Van Tan, Phuong 5, Quan 11, TP HCM",
+                    password: "$2b$10$KAlkWMbCT/Q3Ona0PJj6Sebkw0jFAIcpKADmwCH9bEsJ/H1SI2sXy"
+                });
+            }
+            await User.insertMany(data);
+            res.json(data);
+        } catch (err) {
+            console.log(err);
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ errors: { msg: "Server Error" } });
         }
     },

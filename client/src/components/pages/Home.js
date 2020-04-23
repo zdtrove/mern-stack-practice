@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { loadAuth, getUsers } from '../../redux/actions/AuthActions';
+import { loadAuth, getUsers, insertUsers, deleteUser } from '../../redux/actions/AuthActions';
 import {
     Container,
     Table,
@@ -123,12 +123,14 @@ const Home = (props) => {
                         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
                             User List
                         </Typography>
+                        <Button onClick={() => props.insertUsers()} variant="contained" size="small" color="primary" style={{ width: '20%' }}>Insert Users</Button>
                     </Toolbar>
                     <TableContainer style={{ maxHeight: 470 }}>
                         <Table className={classes.table} stickyHeader aria-label="sticky table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center">Username</TableCell>
+                                    <TableCell align="center">Email</TableCell>
                                     <TableCell align="center">Gender</TableCell>
                                     <TableCell align="center">Roles</TableCell>
                                     <TableCell align="center">Location</TableCell>
@@ -142,12 +144,13 @@ const Home = (props) => {
                                 ).map((row) => (
                                     <TableRow key={row.userName}>
                                         <TableCell align="center">{row.userName}</TableCell>
+                                        <TableCell align="center">{row.email}</TableCell>
                                         <TableCell align="center">{row.gender === 0 ? 'Male' : 'Female'}</TableCell>
                                         <TableCell align="center">{row.role}</TableCell>
                                         <TableCell align="center">{row.location}</TableCell>
-                                        <TableCell align="center">
-                                            <Button component={Link} to={`/user/${row._id}`} color="primary" size="small" variant="contained">Detail</Button>
-                                            {' '}<IconButton><DeleteForeverIcon color="secondary" /></IconButton>
+                                        <TableCell align='left'>
+                                            <Button component={Link} to={`/user/${row._id}`} color="primary" size="small" variant="contained">Detail</Button>{' '}
+                                            {(row.role !== 'admin' && row._id !== props.user._id) ? <IconButton onClick={() => props.deleteUser(row._id)}><DeleteForeverIcon color="secondary" /></IconButton> : null }
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -188,4 +191,11 @@ const mapStateToProps = state => ({
     users: state.auth.users
 });
 
-export default connect(mapStateToProps, { loadAuth, getUsers })(Home);
+const mapDispatchToProps = {
+    loadAuth, 
+    getUsers,
+    insertUsers,
+    deleteUser
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -14,8 +14,9 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { getUser } from '../../redux/actions/AuthActions';
+import { getUser, deleteUser } from '../../redux/actions/AuthActions';
 import UserEdit from './UserEdit';
+import { Redirect } from 'react-router-dom';
 
 const UserDetail = (props) => {
     React.useEffect(() => {
@@ -33,14 +34,20 @@ const UserDetail = (props) => {
     const classes = useStyles();
     const userDetail = props.userDetail ? props.userDetail : {};
     const [open, setOpen] = React.useState(false);
+    const [deleteSuccess, setDeleteSuccess] = React.useState(false);
     const handleOpen = () => {
         setOpen(true);
     }
     const handleClose = () => {
         setOpen(false);
     }
+    const handleDelete = id => {
+        props.deleteUser(id);
+        setDeleteSuccess(true);
+    }
     return (
         <Container component="main" maxWidth="md" className={classes.container}>
+            {props.userDetail && Object.keys(props.userDetail).length === 0 && deleteSuccess ? <Redirect to='/' /> : null}
             <Card>
                 <CardHeader title="User Detail" />
                 <Divider />
@@ -87,7 +94,7 @@ const UserDetail = (props) => {
                 </CardContent>
                 <CardActions className={classes.actions}>
                     <Button size="small" variant="contained" color="primary" onClick={() => handleOpen()}>Edit</Button>
-                    <Button size="small" variant="contained" color="secondary">Delete</Button>
+                    <Button size="small" variant="contained" color="secondary" onClick={() => handleDelete(userDetail._id)}>Delete</Button>
                 </CardActions>
                 <UserEdit handleCloseProps={handleClose} open={open} userDetail={userDetail} />
             </Card>
@@ -99,4 +106,4 @@ const mapStateToProps = state => ({
     userDetail: state.auth.userDetail
 });
 
-export default connect(mapStateToProps, { getUser })(UserDetail);
+export default connect(mapStateToProps, { getUser, deleteUser })(UserDetail);

@@ -14,6 +14,8 @@ router.delete('/user/:userId', auth, UsersController.deleteUser);
 
 router.get('/users', auth, UsersController.getUsers);
 
+router.get('/users/insertUsers', auth, UsersController.insertUsers);
+
 router.post('/register', validateRegister(), UsersController.register);
 
 router.post('/login', validateLogin(), UsersController.login);

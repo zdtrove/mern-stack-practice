@@ -8,13 +8,17 @@ import {
 	LOGOUT,
 	SET_AUTHENTICATED,
 	LOAD_AUTH,
-	GET_ALL_USERS,
+	GET_USERS,
 	LOAD_AUTH_ERROR,
 	GET_ALL_USERS_ERROR,
 	GET_USER,
 	GET_USER_ERROR,
 	UPDATE_USER,
-	UPDATE_USER_ERROR
+	UPDATE_USER_ERROR,
+	DELETE_USER,
+	DELETE_USER_ERROR,
+	INSERT_USERS,
+	INSERT_USERS_ERROR
 } from '../types';
 
 const initialState = {
@@ -39,10 +43,15 @@ export default function (state = initialState, {type, payload}) {
 				...state,
 				user: payload
 			}
-		case GET_ALL_USERS:
+		case GET_USERS:
 			return {
 				...state,
 				users: payload
+			}
+		case INSERT_USERS:
+			return {
+				...state,
+				users: [...state.users, ...payload]
 			}
 		case GET_USER:
 			return {
@@ -88,7 +97,15 @@ export default function (state = initialState, {type, payload}) {
 				...state,
 				users: null
 			}
+		case DELETE_USER:
+			return {
+				...state,
+				userDetail: {},
+				users: state.users.filter(user => user._id !== payload)
+			}
 		case SET_ERROR:
+		case DELETE_USER_ERROR:
+		case INSERT_USERS_ERROR:
 			return {
 				...state,
 				errors: payload

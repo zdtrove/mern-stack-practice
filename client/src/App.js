@@ -14,9 +14,10 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import { SET_AUTHENTICATED } from './redux/types';
 import axios from 'axios';
+import config from './config';
 
 const theme = createMuiTheme(themeFile);
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = config.API_URL;
 
 if (localStorage.token) {
 	store.dispatch({ type: SET_AUTHENTICATED });
