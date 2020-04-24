@@ -110,7 +110,7 @@ export default function (state = initialState, {type, payload}) {
 			return {
 				...state,
 				loading: false,
-				users: null
+				users: []
 			}
 		case DELETE_USER:
 			return {

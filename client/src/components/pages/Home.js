@@ -15,8 +15,10 @@ import {
     Toolbar,
     Typography,
     Button,
-    CircularProgress
+    CircularProgress,
+    Snackbar
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import {
     FirstPage as FirstPageIcon,
     KeyboardArrowLeft,
@@ -33,8 +35,8 @@ const Home = (props) => {
         if (!props.isAuthenticated) {
             props.history.push('/login');
         } else {
-            if (Object.keys(props.user).length === 0) props.loadAuth();
-            if (props.users.length === 0) props.getUsers();
+            if (props.user && Object.keys(props.user).length === 0) props.loadAuth();
+            if (props.users && props.users.length === 0) props.getUsers();
         }
         // eslint-disable-next-line
     }, [props.isAuthenticated, props.history]);
@@ -128,10 +130,22 @@ const Home = (props) => {
         setOpenModel(false);
     }
 
+    const [openSnackbar, setOpenSnackbar] = React.useState(true);
+
     const users = props.users ? props.users : [];
     const { loading } = props;
 
     return <Container component="main" maxWidth="xl" className={classes.container}>
+        <Snackbar 
+            open={openSnackbar} 
+            autoHideDuration={3000} 
+            onClose={() => setOpenSnackbar(false)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center'}}
+        >
+            <Alert onClose={() => setOpenSnackbar(false)} severity="success" elevation={3} variant="filled">
+                Login success!
+            </Alert>
+        </Snackbar>
         {
             users.length > 0 ? (
                 <Paper>
@@ -169,7 +183,7 @@ const Home = (props) => {
                                         <TableCell align="center">{row.location}</TableCell>
                                         <TableCell align='left'>
                                             <Button component={Link} to={`/user/${row._id}`} color="primary" size="small" variant="contained">Detail</Button>{' '}
-                                            {(row.role !== 'admin' && row._id !== props.user._id) ? <IconButton onClick={() => showModel(row._id)}><DeleteForeverIcon color="secondary" /></IconButton> : null }
+                                            {(row.role !== 'admin' && row._id !== props.user._id) ? <IconButton onClick={() => showModel(row._id)}><DeleteForeverIcon color="secondary" /></IconButton> : null}
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -199,8 +213,8 @@ const Home = (props) => {
                     <ConfirmDelete idDelete={idDelete} openModel={openModel} closeModel={closeModel} />
                 </Paper>
             ) : (
-                <p>LOADING USERS ...</p>
-            )
+                    <p>LOADING USERS ...</p>
+                )
         }
     </Container>
 }
@@ -213,7 +227,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    loadAuth, 
+    loadAuth,
     getUsers,
     insertUsers,
     deleteUser

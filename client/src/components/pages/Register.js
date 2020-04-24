@@ -1,10 +1,11 @@
 import React from 'react';
-import { isEmail, isEmpty, isLength } from 'validator';
+import { isEmpty, isLength } from 'validator';
 import { Container, TextField, Typography, Avatar, Button, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { LockOutlined } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { register, setError, clearError } from '../../redux/actions/AuthActions';
+import { GetErrorMessage, GetErrorMessage2 } from '../../utils/validator';
 
 const useStyles = makeStyles(theme => ({
 	...theme.globalStyles.common,
@@ -13,7 +14,6 @@ const useStyles = makeStyles(theme => ({
 
 const Register = (props) => {
 	const classes = useStyles();
-	console.log(classes);
 	React.useEffect(() => {
 		if (props.isAuthenticated === true || localStorage.token) {
 			props.history.push('/');
@@ -37,16 +37,23 @@ const Register = (props) => {
 		if (!isEmpty(value)) delete errs[name];
 		else errs[name] = `Please provide ${name} field`;
 		if (name === 'userName' && !isEmpty(value)) {
-			if (!isLength(value, {min: 3})) errs[name] = `Please provide 3 character long ${name}`;
-			if (!isLength(value, {max: 24})) errs[name] = `Please provide a ${name} shorter than 24 characters`;
+			errs[name] = GetErrorMessage('Username', 'check_length', {min: 3, max: 24}, value);
 		}
 		if (name === 'email' && !isEmpty(value)) {
-			if (!isEmail(value)) errs[name] = 'Invalid email address';
+			errs[name] = GetErrorMessage('Email', 'check_email', null, value);
 		}
-		if ((name === 'password' || name === 'passwordConfirm') && !isEmpty(value)) {
-			if (!isLength(value, {min: 6})) errs[name] = `Please provide 6 character long ${name}`;
-			if (!isLength(value, {max: 32})) errs[name] = `Please provide a ${name} shorter than 32 characters`;
+		if (name === 'password' && !isEmpty(value)) {
+			errs[name] = GetErrorMessage('Password', 'check_length', {min: 6, max: 32}, value);
 		}
+		if (name === 'passwordConfirm' && !isEmpty(value)) {
+			errs[name] = GetErrorMessage('Password Confirm', 'check_length', {min: 6, max: 32}, value);
+		}
+		let errorTest = GetErrorMessage2(name, value, [
+			['userName', 'check_length', {min: 3, max: 24}],
+			['password', 'check_length', {min: 6, max: 32}],
+			['passwordConfirm', 'check_length', {min: 6, max: 32}]
+		]);
+		console.log(errorTest);
 		props.setError(errs);
 	}
 	const handleSubmit = evt => {
