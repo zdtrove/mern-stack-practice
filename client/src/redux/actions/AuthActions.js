@@ -17,7 +17,8 @@ import {
 	DELETE_USER,
 	DELETE_USER_ERROR,
 	INSERT_USERS,
-	INSERT_USERS_ERROR
+	INSERT_USERS_ERROR,
+	LOADING
 } from '../types';
 import axios from 'axios';
 import apiCaller from '../../utils/apiCaller';
@@ -41,6 +42,7 @@ export const loadAuth = () => async dispatch => {
 }
 
 export const getUser = id => async dispatch => {
+	dispatch({ type: LOADING });
 	try {
 		const res = await apiCaller('GET', 'auth', `user/${id}`, '');
 		dispatch({
@@ -56,6 +58,7 @@ export const getUser = id => async dispatch => {
 }
 
 export const updateUser = userData => async dispatch => {
+	dispatch({ type: LOADING });
 	try {
 		const res = await apiCaller('PUT', 'auth', `user/${userData._id}`, userData);
 		dispatch({
@@ -86,6 +89,7 @@ export const deleteUser = id => async dispatch => {
 }
 
 export const getUsers = () => async dispatch => {
+	dispatch({ type: LOADING });
 	try {
 		const res = await apiCaller('GET', 'auth', 'users', '');
 		dispatch({
@@ -101,6 +105,7 @@ export const getUsers = () => async dispatch => {
 }
 
 export const insertUsers = () => async dispatch => {
+	dispatch({ type: LOADING });
 	try {
 		const res = await apiCaller('GET', 'auth', 'users/insertUsers', '');
 		dispatch({
@@ -116,6 +121,7 @@ export const insertUsers = () => async dispatch => {
 }
 
 export const register = userData => async dispatch => {
+	dispatch({ type: LOADING });
 	try {
 		const res = await apiCaller('POST', 'auth', 'register', userData);
 		dispatch({
@@ -131,6 +137,7 @@ export const register = userData => async dispatch => {
 }
 
 export const login = userData => async dispatch => {
+	dispatch({ type: LOADING });
 	try {
 		const res = await apiCaller('POST', 'auth', 'login', userData);
 		dispatch({

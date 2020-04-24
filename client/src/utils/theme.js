@@ -1,3 +1,7 @@
+import { createMuiTheme } from '@material-ui/core/styles';
+
+const theme = createMuiTheme();
+
 export default {
     palette: {
         primary: {
@@ -14,6 +18,48 @@ export default {
         }
     },
     globalStyles: {
-        
+        common: {
+            root: {
+                '& .MuiTextField-root': {
+                    margin: theme.spacing(1),
+                    width: '50ch'
+                },
+                '& .MuiFormHelperText-contained': {
+                    marginLeft: 0
+                }
+            },
+            paper: {
+                marginTop: theme.spacing(15),
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+            },
+            form: {
+                marginTop: theme.spacing(3)
+            },
+            avatar: {
+                margin: theme.spacing(1),
+                backgroundColor: theme.palette.secondary.main,
+            },
+            wrappSubmit: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: '8px'
+            },
+            progress: {
+                color: '#1976d2',
+                position: 'absolute'
+            }
+        },
+        register: {},
+        login: {
+            wrapError: {
+                textAlign: 'center'
+            },
+            errors: {
+                color: 'red'
+            }
+        }
     }
 }

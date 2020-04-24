@@ -50,7 +50,7 @@ const UserEdit = (props) => {
         }
     }, [props.userDetail]);
     const classes = useStyles();
-    const { open, handleCloseProps, updateUser } = props;
+    const { openModel, closeModel, updateUser } = props;
     const [user, setUser] = React.useState({
         userName: '',
         email: '',
@@ -60,7 +60,7 @@ const UserEdit = (props) => {
     });
 
     const handleClose = () => {
-        handleCloseProps();
+        closeModel();
         setUser(props.userDetail);
     }
     
@@ -76,7 +76,7 @@ const UserEdit = (props) => {
         handleClose();
     }
     return (
-        <Modal open={open} onClose={handleClose}>
+        <Modal open={openModel}>
             <Card className={classes.root}>
                 <form onSubmit={onSubmit}>
                     <CardContent>

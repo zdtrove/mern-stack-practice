@@ -18,3 +18,4 @@ export const DELETE_USER = 'DELETE_USER';
 export const DELETE_USER_ERROR = 'DELETE_USER_ERROR';
 export const INSERT_USERS = 'INSERT_USERS';
 export const INSERT_USERS_ERROR = 'INSERT_USERS_ERROR';
+export const LOADING = 'LOADING';

@@ -18,7 +18,8 @@ import {
 	DELETE_USER,
 	DELETE_USER_ERROR,
 	INSERT_USERS,
-	INSERT_USERS_ERROR
+	INSERT_USERS_ERROR,
+	LOADING
 } from '../types';
 
 const initialState = {
@@ -32,6 +33,11 @@ const initialState = {
 
 export default function (state = initialState, {type, payload}) {
 	switch (type) {
+		case LOADING:
+			return {
+				...state,
+				loading: true
+			}
 		case SET_AUTHENTICATED:
 			return {
 				...state,
@@ -46,31 +52,37 @@ export default function (state = initialState, {type, payload}) {
 		case GET_USERS:
 			return {
 				...state,
+				loading: false,
 				users: payload
 			}
 		case INSERT_USERS:
 			return {
 				...state,
+				loading: false,
 				users: [...state.users, ...payload]
 			}
 		case GET_USER:
 			return {
 				...state,
+				loading: false,
 				userDetail: payload
 			}
 		case GET_USER_ERROR:
 			return {
 				...state,
+				loading: false,
 				userDetail: {}
 			}
 		case UPDATE_USER:
 			return {
 				...state,
+				loading: false,
 				userDetail: payload
 			}
 		case UPDATE_USER_ERROR:
 			return {
 				...state,
+				loading: false,
 				errors: payload
 			}
 		case REGISTER_SUCCESS:
@@ -79,6 +91,7 @@ export default function (state = initialState, {type, payload}) {
 			return {
 				...state,
 				isAuthenticated: true,
+				loading: false,
 				errors: null
 			}
 		case REGISTER_FAIL:
@@ -89,12 +102,14 @@ export default function (state = initialState, {type, payload}) {
 			return {
 				...state,
 				isAuthenticated: false,
+				loading: false,
 				errors: payload,
 				user: {}
 			}
 		case GET_ALL_USERS_ERROR:
 			return {
 				...state,
+				loading: false,
 				users: null
 			}
 		case DELETE_USER:
@@ -108,6 +123,7 @@ export default function (state = initialState, {type, payload}) {
 		case INSERT_USERS_ERROR:
 			return {
 				...state,
+				loading: false,
 				errors: payload
 			}
 		case CLEAR_ERROR:

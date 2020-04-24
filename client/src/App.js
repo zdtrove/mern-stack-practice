@@ -16,7 +16,7 @@ import { SET_AUTHENTICATED } from './redux/types';
 import axios from 'axios';
 import config from './config';
 
-const theme = createMuiTheme(themeFile);
+const customTheme = createMuiTheme(themeFile);
 axios.defaults.baseURL = config.API_URL;
 
 if (localStorage.token) {
@@ -27,7 +27,7 @@ if (localStorage.token) {
 
 const App = () => {
     return (
-        <MuiThemeProvider theme={theme}>
+        <MuiThemeProvider theme={customTheme}>
         	<Provider store={store}>
         		<Router>
 		        	<Navbar />

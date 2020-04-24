@@ -14,7 +14,8 @@ import {
     IconButton,
     Toolbar,
     Typography,
-    Button
+    Button,
+    CircularProgress
 } from '@material-ui/core';
 import {
     FirstPage as FirstPageIcon,
@@ -25,14 +26,15 @@ import {
 } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
+import ConfirmDelete from './ConfirmDelete';
 
 const Home = (props) => {
     React.useEffect(() => {
         if (!props.isAuthenticated) {
             props.history.push('/login');
         } else {
-            props.loadAuth();
-            props.getUsers();
+            if (Object.keys(props.user).length === 0) props.loadAuth();
+            if (props.users.length === 0) props.getUsers();
         }
         // eslint-disable-next-line
     }, [props.isAuthenticated, props.history]);
@@ -92,6 +94,7 @@ const Home = (props) => {
     }
 
     const useStyles2 = makeStyles(theme => ({
+        ...theme.globalStyles.common,
         table: {
             minWidth: 500,
         },
@@ -114,7 +117,20 @@ const Home = (props) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    const [idDelete, setIdDelete] = React.useState(null);
+    const [openModel, setOpenModel] = React.useState(false);
+    const showModel = id => {
+        setIdDelete(id);
+        setOpenModel(true);
+    }
+    const closeModel = () => {
+        setOpenModel(false);
+    }
+
     const users = props.users ? props.users : [];
+    const { loading } = props;
+
     return <Container component="main" maxWidth="xl" className={classes.container}>
         {
             users.length > 0 ? (
@@ -123,7 +139,10 @@ const Home = (props) => {
                         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
                             User List
                         </Typography>
-                        <Button onClick={() => props.insertUsers()} variant="contained" size="small" color="primary" style={{ width: '20%' }}>Insert Users</Button>
+                        <Button disabled={loading} onClick={() => props.insertUsers()} variant="contained" size="small" color="primary" style={{ width: '20%' }}>
+                            Insert Users
+                            {loading && <CircularProgress size={30} className={classes.progress} />}
+                        </Button>
                     </Toolbar>
                     <TableContainer style={{ maxHeight: 470 }}>
                         <Table className={classes.table} stickyHeader aria-label="sticky table">
@@ -150,7 +169,7 @@ const Home = (props) => {
                                         <TableCell align="center">{row.location}</TableCell>
                                         <TableCell align='left'>
                                             <Button component={Link} to={`/user/${row._id}`} color="primary" size="small" variant="contained">Detail</Button>{' '}
-                                            {(row.role !== 'admin' && row._id !== props.user._id) ? <IconButton onClick={() => props.deleteUser(row._id)}><DeleteForeverIcon color="secondary" /></IconButton> : null }
+                                            {(row.role !== 'admin' && row._id !== props.user._id) ? <IconButton onClick={() => showModel(row._id)}><DeleteForeverIcon color="secondary" /></IconButton> : null }
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -163,7 +182,7 @@ const Home = (props) => {
                         </Table>
                     </TableContainer>
                     <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, { label: 'All', value: -1 }]}
+                        rowsPerPageOptions={[5, 10, 15, 20, 50, 100]}
                         colSpan={3}
                         count={users.length}
                         rowsPerPage={rowsPerPage}
@@ -177,10 +196,11 @@ const Home = (props) => {
                         onChangeRowsPerPage={handleChangeRowsPerPage}
                         ActionsComponent={TablePaginationActions}
                     />
+                    <ConfirmDelete idDelete={idDelete} openModel={openModel} closeModel={closeModel} />
                 </Paper>
             ) : (
-                    <p>No Users</p>
-                )
+                <p>LOADING USERS ...</p>
+            )
         }
     </Container>
 }
@@ -188,7 +208,8 @@ const Home = (props) => {
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
-    users: state.auth.users
+    users: state.auth.users,
+    loading: state.auth.loading
 });
 
 const mapDispatchToProps = {

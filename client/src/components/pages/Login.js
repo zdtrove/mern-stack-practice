@@ -4,7 +4,8 @@ import {
 	TextField, 
 	Typography, 
 	Avatar, 
-	Button 
+	Button,
+	CircularProgress
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { LockOutlined } from '@material-ui/icons';
@@ -13,40 +14,8 @@ import { connect } from 'react-redux';
 import { isEmpty, isEmail } from 'validator';
 
 const useStyles = makeStyles((theme) => ({
-  	root: {
-	    '& .MuiTextField-root': {
-	      	margin: theme.spacing(1),
-	      	width: '50ch'
-	    },
-	    '& .MuiFormHelperText-contained': {
-	    	marginLeft: 0
-	    }
-  	},
-  	paper: {
-	    marginTop: theme.spacing(15),
-	    display: 'flex',
-	    flexDirection: 'column',
-	    alignItems: 'center'
-	},
-	form : {
-		marginTop: theme.spacing(3)
-	},
-	avatar: {
-	    margin: theme.spacing(1),
-	    backgroundColor: theme.palette.secondary.main,
-	},
-	wrappSubmit: {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		margin: '8px'
-	},
-	wrapError: {
-		textAlign: 'center'
-	},
-	errors: {
-		color: 'red'
-	}
+  	...theme.globalStyles.common,
+  	...theme.globalStyles.login
 }));
 
 const Login = (props) => {
@@ -87,7 +56,7 @@ const Login = (props) => {
 		} else props.login({ email, password });
 	}
 	const classes = useStyles();
-	const { errors } = props;
+	const { errors, loading } = props;
 	return <Container component="main" maxWidth="xs" className={classes.root}>
 		<div className={classes.paper}>
 			<Avatar className={classes.avatar}>
@@ -125,7 +94,10 @@ const Login = (props) => {
 		        	<Typography className={classes.errors}>{errors && errors.msg ? errors.msg : ''}</Typography>
 		        </div>
 		        <div className={classes.wrappSubmit}>
-			        <Button type="submit" variant="contained" color="primary" fullWidth>Login</Button>
+			        <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
+						Login
+						{loading && <CircularProgress size={30} className={classes.progress} />}
+					</Button>
 			    </div>
 			</form>
 		</div>
@@ -134,7 +106,8 @@ const Login = (props) => {
 
 const mapStateToProps = state => ({
 	isAuthenticated: state.auth.isAuthenticated,
-	errors: state.auth.errors
+	errors: state.auth.errors,
+	loading: state.auth.loading
 });
 
 export default connect(mapStateToProps, { login, setError, clearError })(Login);

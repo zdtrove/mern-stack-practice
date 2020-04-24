@@ -1,44 +1,19 @@
 import React from 'react';
 import { isEmail, isEmpty, isLength } from 'validator';
-import { Container, TextField, Typography, Avatar, Button } from '@material-ui/core';
+import { Container, TextField, Typography, Avatar, Button, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { LockOutlined } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { register, setError, clearError } from '../../redux/actions/AuthActions';
 
-const useStyles = makeStyles((theme) => ({
-  	root: {
-	    '& .MuiTextField-root': {
-	      	margin: theme.spacing(1),
-	      	width: '50ch'
-	    },
-	    '& .MuiFormHelperText-contained': {
-	    	marginLeft: 0
-	    }
-  	},
-  	paper: {
-	    marginTop: theme.spacing(15),
-	    display: 'flex',
-	    flexDirection: 'column',
-	    alignItems: 'center'
-	},
-	form : {
-		marginTop: theme.spacing(3)
-	},
-	avatar: {
-	    margin: theme.spacing(1),
-	    backgroundColor: theme.palette.secondary.main,
-	},
-	wrappSubmit: {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		margin: '8px'
-	}
+const useStyles = makeStyles(theme => ({
+	...theme.globalStyles.common,
+	...theme.globalStyles.register
 }));
 
 const Register = (props) => {
 	const classes = useStyles();
+	console.log(classes);
 	React.useEffect(() => {
 		if (props.isAuthenticated === true || localStorage.token) {
 			props.history.push('/');
@@ -89,7 +64,7 @@ const Register = (props) => {
 			props.setError(errs);
 		} else props.register({ userName, email, password, passwordConfirm });
 	}
-	const { errors } = props;
+	const { errors, loading } = props;
 	return <Container component="main" maxWidth="xs" className={classes.root}>
 		<div className={classes.paper}>
 			<Avatar className={classes.avatar}>
@@ -147,7 +122,10 @@ const Register = (props) => {
 		        	/>
 		        </div>
 		        <div className={classes.wrappSubmit}>
-			        <Button type="submit" color="primary" variant="contained" fullWidth>Register</Button>
+			        <Button type="submit" color="primary" variant="contained" fullWidth disabled={loading} align="center">
+						Register
+						{loading && <CircularProgress size={30} className={classes.progress} />}
+					</Button>
 			    </div>
 			</form>
 		</div>
@@ -156,7 +134,8 @@ const Register = (props) => {
 
 const mapStateToProps = state => ({
 	isAuthenticated: state.auth.isAuthenticated,
-	errors: state.auth.errors
+	errors: state.auth.errors,
+	loading: state.auth.loading
 });
 
 export default connect(mapStateToProps, { register, setError, clearError })(Register);

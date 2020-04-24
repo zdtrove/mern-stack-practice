@@ -14,9 +14,10 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { getUser, deleteUser } from '../../redux/actions/AuthActions';
+import { getUser } from '../../redux/actions/AuthActions';
 import UserEdit from './UserEdit';
 import { Redirect } from 'react-router-dom';
+import ConfirmDelete from './ConfirmDelete';
 
 const UserDetail = (props) => {
     React.useEffect(() => {
@@ -33,21 +34,15 @@ const UserDetail = (props) => {
     }));
     const classes = useStyles();
     const userDetail = props.userDetail ? props.userDetail : {};
-    const [open, setOpen] = React.useState(false);
+    const [openEdit, setOpenEdit] = React.useState(false);
+    const [openDelete, setOpenDelete] = React.useState(false);
     const [deleteSuccess, setDeleteSuccess] = React.useState(false);
-    const handleOpen = () => {
-        setOpen(true);
-    }
-    const handleClose = () => {
-        setOpen(false);
-    }
-    const handleDelete = id => {
-        props.deleteUser(id);
-        setDeleteSuccess(true);
+    const handleOpenDelete = () => {
+        setOpenDelete(true);
     }
     return (
         <Container component="main" maxWidth="md" className={classes.container}>
-            {props.userDetail && Object.keys(props.userDetail).length === 0 && deleteSuccess ? <Redirect to='/' /> : null}
+            {props.userDetail && Object.keys(props.userDetail).length === 0 && deleteSuccess && <Redirect to='/' />}
             <Card>
                 <CardHeader title="User Detail" />
                 <Divider />
@@ -93,10 +88,11 @@ const UserDetail = (props) => {
                     </Table>
                 </CardContent>
                 <CardActions className={classes.actions}>
-                    <Button size="small" variant="contained" color="primary" onClick={() => handleOpen()}>Edit</Button>
-                    <Button size="small" variant="contained" color="secondary" onClick={() => handleDelete(userDetail._id)}>Delete</Button>
+                    <Button size="small" variant="contained" color="primary" onClick={() => setOpenEdit(true)}>Edit</Button>
+                    <Button size="small" variant="contained" color="secondary" onClick={() => handleOpenDelete()}>Delete</Button>
                 </CardActions>
-                <UserEdit handleCloseProps={handleClose} open={open} userDetail={userDetail} />
+                <UserEdit closeModel={() => setOpenEdit(false)} openModel={openEdit} userDetail={userDetail} />
+                <ConfirmDelete idDelete={userDetail._id} openModel={openDelete} closeModel={() => setOpenDelete(false)} setDeleteSuccess={setDeleteSuccess} />
             </Card>
         </Container>
     )
@@ -106,4 +102,4 @@ const mapStateToProps = state => ({
     userDetail: state.auth.userDetail
 });
 
-export default connect(mapStateToProps, { getUser, deleteUser })(UserDetail);
+export default connect(mapStateToProps, { getUser })(UserDetail);
