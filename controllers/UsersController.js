@@ -66,13 +66,13 @@ module.exports = {
     insertUsers: async (req, res) => {
         try {
             let data = [];
-            for (let i = 1; i < 10000; i++) {
+            for (let i = 1; i < 100; i++) {
                 data.push({
                     userName: `user${i}`,
                     email: `user${i}@gmail.com`,
                     role: "user",
                     gender: 1,
-                    location: "100 Vo Van Tan, Phuong 5, Quan 11, TP HCM",
+                    location: "TP HCM",
                     password: "$2b$10$KAlkWMbCT/Q3Ona0PJj6Sebkw0jFAIcpKADmwCH9bEsJ/H1SI2sXy"
                 });
             }

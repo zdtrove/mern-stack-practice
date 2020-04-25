@@ -1,11 +1,10 @@
 import React from 'react';
-import { isEmpty, isLength } from 'validator';
 import { Container, TextField, Typography, Avatar, Button, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { LockOutlined } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { register, setError, clearError } from '../../redux/actions/AuthActions';
-import { GetErrorMessage, GetErrorMessage2 } from '../../utils/validator';
+import { GetErrorMessageOnChange, GetErrorMessageOnSubmit } from '../../utils/validator';
 
 const useStyles = makeStyles(theme => ({
 	...theme.globalStyles.common,
@@ -13,13 +12,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Register = (props) => {
+	const { errors, loading, setError, register, clearError, isAuthenticated, history } = props;
 	const classes = useStyles();
 	React.useEffect(() => {
-		if (props.isAuthenticated === true || localStorage.token) {
-			props.history.push('/');
-		} else props.clearError();
+		if (isAuthenticated === true || localStorage.token) {
+			history.push('/');
+		} else clearError();
 		// eslint-disable-next-line
-	}, [props.isAuthenticated, props.history]);
+	}, [isAuthenticated, history]);
 	const [user, setUser] = React.useState({
 		userName: '',
 		email: '',
@@ -27,51 +27,29 @@ const Register = (props) => {
 		passwordConfirm: ''
 	});
 	const { userName, email, password, passwordConfirm } = user;
+	const rules = {
+	    userName: { name: 'Username', require: true, minLength: 3, maxLength: 24 },
+	    email: { name: 'Email', require: true, isEmail: true },
+	    password: { name: 'Password', require: true, minLength: 6, maxLength: 32 },
+	    passwordConfirm: { name: 'Password Confirm', require: true, minLength: 6, maxLength: 32, match: 'password' }
+	}
 	const handleChange = evt => {
 		const { name, value } = evt.target;
 		setUser({
 			...user,
 			[name]: value
 		});
-		let errs = { ...props.errors };
-		if (!isEmpty(value)) delete errs[name];
-		else errs[name] = `Please provide ${name} field`;
-		if (name === 'userName' && !isEmpty(value)) {
-			errs[name] = GetErrorMessage('Username', 'check_length', {min: 3, max: 24}, value);
-		}
-		if (name === 'email' && !isEmpty(value)) {
-			errs[name] = GetErrorMessage('Email', 'check_email', null, value);
-		}
-		if (name === 'password' && !isEmpty(value)) {
-			errs[name] = GetErrorMessage('Password', 'check_length', {min: 6, max: 32}, value);
-		}
-		if (name === 'passwordConfirm' && !isEmpty(value)) {
-			errs[name] = GetErrorMessage('Password Confirm', 'check_length', {min: 6, max: 32}, value);
-		}
-		let errorTest = GetErrorMessage2(name, value, [
-			['userName', 'check_length', {min: 3, max: 24}],
-			['password', 'check_length', {min: 6, max: 32}],
-			['passwordConfirm', 'check_length', {min: 6, max: 32}]
-		]);
-		console.log(errorTest);
-		props.setError(errs);
+		let errs = { ...errors };
+		errs[name] = GetErrorMessageOnChange(name, value, rules);
+		setError(errs);
 	}
 	const handleSubmit = evt => {
 		evt.preventDefault();
-		let errs = {};
-		if (!isLength(password, {min: 6})) errs['password'] = `Please provide 6 character long password`;
-		if (!isLength(password, {max: 32})) errs['password'] = `Please provide a password shorter than 32 characters`;
-		if (password !== '' && password !== passwordConfirm) errs.passwordConfirm = 'Password confirmation does not match password';
-		if (!isLength(passwordConfirm, {min: 6})) errs['passwordConfirm'] = `Please provide 6 character long passwordConfirm`;
-		if (!isLength(passwordConfirm, {max: 32})) errs['passwordConfirm'] = `Please provide a passwordConfirm shorter than 32 characters`;
-		for (const item in user) {
-		  	if (isEmpty(user[item])) errs[item] = `Please provide ${item} field`;
-		}
+		let errs = GetErrorMessageOnSubmit(user, rules);
 		if (Object.keys(errs).length > 0) {
-			props.setError(errs);
-		} else props.register({ userName, email, password, passwordConfirm });
+			setError(errs);
+		} else register(user);
 	}
-	const { errors, loading } = props;
 	return <Container component="main" maxWidth="xs" className={classes.root}>
 		<div className={classes.paper}>
 			<Avatar className={classes.avatar}>
@@ -82,50 +60,31 @@ const Register = (props) => {
 	        </Typography>
 			<form onSubmit={handleSubmit} className={classes.form}>
 				<div>
-					<TextField
-						name="userName"
-		          		label="Username"
-		          		variant="outlined"
-		          		value={userName}
-		          		onChange={handleChange}
-		          		helperText={errors && errors.userName ? errors.userName : ''}
-						error={errors && errors.userName ? true : false} 
+					<TextField name="userName" label="Username" variant="outlined"
+		          		value={userName} onChange={handleChange}
+		          		helperText={errors.userName}
+						error={errors.userName ? true : false} 
 		        	/>
 		        </div>
 		        <div>
-					<TextField
-						name="email"
-		          		label="Email"
-		          		type="email"
-		          		variant="outlined"
-		          		value={email}
-		          		onChange={handleChange}
-		          		helperText={errors && errors.email ? errors.email : ''}
-						error={errors && errors.email ? true : false} 
+					<TextField name="email" label="Email" type="email" variant="outlined"
+		          		value={email} onChange={handleChange}
+		          		helperText={errors.email}
+						error={errors.email ? true : false} 
 		        	/>
 		        </div>
 		        <div>
-					<TextField
-						name="password"
-		          		label="Password"
-		          		type="password"
-		          		variant="outlined"
-		          		value={password}
-		          		onChange={handleChange}
-		          		helperText={errors && errors.password ? errors.password : ''}
-						error={errors && errors.password ? true : false} 
+					<TextField name="password" label="Password" type="password" variant="outlined"
+		          		value={password} onChange={handleChange}
+		          		helperText={errors.password}
+						error={errors.password ? true : false} 
 		        	/>
 		        </div>
 		        <div>
-		        	<TextField
-		        		name="passwordConfirm"
-		          		label="Password Confirm"
-		          		type="password"
-		          		variant="outlined"
-		          		value={passwordConfirm}
-		          		onChange={handleChange}
-		          		helperText={errors && errors.passwordConfirm ? errors.passwordConfirm : ''}
-						error={errors && errors.passwordConfirm ? true : false} 
+		        	<TextField name="passwordConfirm" label="Password Confirm" type="password"
+		          		variant="outlined" value={passwordConfirm} onChange={handleChange}
+		          		helperText={errors.passwordConfirm}
+						error={errors.passwordConfirm ? true : false} 
 		        	/>
 		        </div>
 		        <div className={classes.wrappSubmit}>

@@ -36,7 +36,7 @@ const Home = (props) => {
             props.history.push('/login');
         } else {
             if (props.user && Object.keys(props.user).length === 0) props.loadAuth();
-            if (props.users && props.users.length === 0) props.getUsers();
+            props.getUsers();
         }
         // eslint-disable-next-line
     }, [props.isAuthenticated, props.history]);
@@ -101,7 +101,7 @@ const Home = (props) => {
             minWidth: 500,
         },
         container: {
-            padding: theme.spacing(15),
+            paddingTop: '80px'
         },
         title: {
             flex: '1 1 100%',
@@ -135,7 +135,7 @@ const Home = (props) => {
     const users = props.users ? props.users : [];
     const { loading } = props;
 
-    return <Container component="main" maxWidth="xl" className={classes.container}>
+    return <Container component="main" maxWidth="lg" className={classes.container}>
         <Snackbar 
             open={openSnackbar} 
             autoHideDuration={3000} 

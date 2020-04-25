@@ -1,36 +1,47 @@
 import { isEmail, isLength, isEmpty } from "validator";
 
-export const GetErrorMessage = (fieldName, ruleName, rules, data) => {
-	let error = null;
-	if (ruleName === 'check_length') {
-        if (!isLength(data, {min: rules.min})) error = `Please provide ${rules.min} character long ${fieldName}`;
-        if (!isLength(data, {max: rules.max})) error = `Please provide a ${fieldName} shorter than ${rules.max} characters`;
+export const GetErrorMessageOnChange = (name, value, rules) => {
+    let err = null;
+    for (const key in rules) {
+        if (key === name) {
+            const fieldName = rules[key];
+            if (fieldName.require && isEmpty(value)) err = `Please provide ${fieldName.name} field`;
+            if (!isEmpty(value)) {
+                if (fieldName.minLength && !isLength(value, {min: fieldName.minLength})) {
+                    err = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+                }
+                if (fieldName.minLength && !isLength(value, {min: fieldName.minLength})) {
+                    err = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+                }
+                if (fieldName.isEmail && !isEmail(value)) {
+                    err = "Invalid email address";
+                }
+            }
+        }
     }
-    if (ruleName === 'check_email') {
-        if (!isEmail(data)) error = 'Invalid email address';
-    }
-	return error;
+    return err;
 }
 
-export const GetErrorMessage2 = (name, value, rules) => {
-    const mapName = {
-        userName: 'Username',
-        email: 'Email address',
-        password: 'Password',
-        passwordConfirm: 'Password Confirm'
-    }
-    let error = null;
-
-    if (isEmpty(value)) {
-        error = `Please provide ${mapName[name]} field`;
-    } else {
-        rules.map(rule => {
-            if (name === rule[0]) {
-                error = rule;
+export const GetErrorMessageOnSubmit = (data, rules) => {
+    let errs = {};
+    for (const key in rules) {
+        const fieldName = rules[key];
+        const fieldValue = data[key];
+        if (fieldName.require && isEmpty(data[key])) errs[key] = `Please provide ${fieldName.name} field`;
+        if (!isEmpty(fieldValue)) {
+            if (fieldName.minLength && !isLength(fieldValue, {min: fieldName.minLength})) {
+                errs[key] = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
             }
-        });
+            if (fieldName.minLength && !isLength(fieldValue, {min: fieldName.minLength})) {
+                errs[key] = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+            }
+            if (fieldName.isEmail && !isEmail(fieldValue)) {
+                errs[key] = "Invalid email address";
+            }
+            if (fieldName.match && fieldValue !== data[fieldName.match]) {
+                errs[key] = `${fieldName.name} does not match ${rules[fieldName.match].name}`;
+            }
+        }
     }
-    
-
-	return error;
+    return errs;
 }

@@ -13,7 +13,8 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { updateUser } from '../../redux/actions/AuthActions';
+import { updateUser, setError, clearError } from '../../redux/actions/AuthActions';
+import { GetErrorMessageOnChange, GetErrorMessageOnSubmit } from '../../utils/validator';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -50,7 +51,7 @@ const UserEdit = (props) => {
         }
     }, [props.userDetail]);
     const classes = useStyles();
-    const { openModel, closeModel, updateUser } = props;
+    const { openModel, closeModel, updateUser, errors, setError, clearError } = props;
     const [user, setUser] = React.useState({
         userName: '',
         email: '',
@@ -61,43 +62,76 @@ const UserEdit = (props) => {
 
     const handleClose = () => {
         closeModel();
+        clearError();
         setUser(props.userDetail);
     }
-    
+    const rules = {
+        userName: { name: 'Username', require: true, minLength: 3, maxLength: 24 },
+        email: { name: 'Email', require: true, isEmail: true }
+    }
     const handleChange = evt => {
+        const { name, value } = evt.target;
         setUser({
             ...user,
-            [evt.target.name]: evt.target.value
+            [name]: value
         });
+        let errs = { ...errors };
+        errs[name] = GetErrorMessageOnChange(name, value, rules);
+        setError(errs);
     }
-    const onSubmit = evt => {
+    const handleSubmit = evt => {
         evt.preventDefault();
-        updateUser(user);
-        handleClose();
+        let errs = GetErrorMessageOnSubmit(user, rules);
+        if (Object.keys(errs).length > 0) {
+            setError(errs);
+        } else {
+            updateUser(user);
+            handleClose();
+        }
     }
     return (
         <Modal open={openModel}>
             <Card className={classes.root}>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={handleSubmit}>
                     <CardContent>
                         <Typography align="center" gutterBottom variant="h6">
                             Edit Customer
                         </Typography>
                         <Grid className={classes.container} container spacing={3}>
                             <Grid item md={6} xs={12}>
-                                <TextField fullWidth label="Username" name="userName" value={user.userName} onChange={handleChange} variant="outlined"/>
+                                <TextField fullWidth label="Username" name="userName" variant="outlined"
+                                    value={user.userName} onChange={handleChange}
+                                    helperText={errors.userName}
+                                    error={errors.userName ? true : false}
+                                />
                             </Grid>
                             <Grid item md={6} xs={12}>
-                                <TextField fullWidth label="Email address" name="email" value={user.email} onChange={handleChange} variant="outlined"/>
+                                <TextField fullWidth label="Email address" name="email" variant="outlined"
+                                    value={user.email} onChange={handleChange}
+                                    helperText={errors.email}
+                                    error={errors.email ? true : false}
+                                />
                             </Grid>
                             <Grid item md={6} xs={12}>
-                                <TextField fullWidth label="Gender" name="gender" value={user.gender} onChange={handleChange} variant="outlined"/>
+                                <TextField fullWidth label="Gender" name="gender" variant="outlined"
+                                    value={user.gender} onChange={handleChange}
+                                    helperText={errors.gender}
+                                    error={errors.gender ? true : false}
+                                />
                             </Grid>
                             <Grid item md={6} xs={12}>
-                                <TextField fullWidth label="Roles" name="role" value={user.role} onChange={handleChange} variant="outlined"/>
+                                <TextField fullWidth label="Roles" name="role" variant="outlined"
+                                    value={user.role} onChange={handleChange}
+                                    helperText={errors.role}
+                                    error={errors.role ? true : false}
+                                />
                             </Grid>
                             <Grid item md={6} xs={12}>
-                                <TextField fullWidth label="Location" name="location" value={user.location} onChange={handleChange} variant="outlined"/>
+                                <TextField fullWidth label="Location" name="location" variant="outlined"
+                                    value={user.location} onChange={handleChange}
+                                    helperText={errors.location}
+                                    error={errors.location ? true : false}
+                                />
                             </Grid>
                             <Grid item />
                             <Grid item md={6} xs={12}>
@@ -131,4 +165,8 @@ const UserEdit = (props) => {
     )
 }
 
-export default connect(null, { updateUser })(UserEdit);
+const mapStateToProps = state => ({
+    errors: state.auth.errors
+});
+
+export default connect(mapStateToProps, { updateUser, setError, clearError })(UserEdit);

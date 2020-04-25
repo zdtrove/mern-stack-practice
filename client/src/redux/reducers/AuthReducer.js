@@ -25,7 +25,7 @@ import {
 const initialState = {
 	loading: false,
 	isAuthenticated: false,
-	errors: null,
+	errors: {},
 	users: [],
 	user: {},
 	userDetail: {}
@@ -42,7 +42,7 @@ export default function (state = initialState, {type, payload}) {
 			return {
 				...state,
 				isAuthenticated: true,
-				errors: null
+				errors: {}
 			}
 		case LOAD_AUTH:
 			return {
@@ -92,7 +92,7 @@ export default function (state = initialState, {type, payload}) {
 				...state,
 				isAuthenticated: true,
 				loading: false,
-				errors: null
+				errors: {}
 			}
 		case REGISTER_FAIL:
 		case LOGIN_FAIL:
@@ -129,7 +129,7 @@ export default function (state = initialState, {type, payload}) {
 		case CLEAR_ERROR:
 			return {
 				...state,
-				errors: null
+				errors: {}
 			}
 		default:
 			return state;

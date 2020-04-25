@@ -20,11 +20,11 @@ const UserSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        default: "100 Vo Van Tan, Phuong 5, Quan 11, TP HCM"
+        default: "TP HCM"
     },
     role: {
         type: String,
-        default: "User"
+        default: "user"
     }
 });
 

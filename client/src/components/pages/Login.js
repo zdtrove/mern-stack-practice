@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { LockOutlined } from '@material-ui/icons';
 import { login, setError, clearError } from '../../redux/actions/AuthActions';
 import { connect } from 'react-redux';
-import { isEmpty, isEmail } from 'validator';
+import { GetErrorMessageOnChange, GetErrorMessageOnSubmit } from '../../utils/validator';
 
 const useStyles = makeStyles((theme) => ({
   	...theme.globalStyles.common,
@@ -19,44 +19,40 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = (props) => {
+	const { errors, loading, login, clearError, isAuthenticated, history } = props;
 	React.useEffect(() => {
-		if (props.isAuthenticated === true || localStorage.token) {
-			props.history.push('/');
-		} else props.clearError();
+		if (isAuthenticated === true || localStorage.token) {
+			history.push('/');
+		} else clearError();
 		// eslint-disable-next-line
-	}, [props.history, props.isAuthenticated]);
+	}, [history, isAuthenticated]);
 	const [user, setUser] = React.useState({
 		email: '',
 		password: ''
 	});
 	const { email, password } = user;
+	const rules = {
+		email: { name: 'Email', require: true, isEmail: true },
+		password: { name: 'Password', require: true, minLength: 6, maxLength: 32 }
+	}
 	const handleChange = evt => {
 		const { name, value } = evt.target;
 		setUser({
 			...user,
 			[name]: value
 		});
-		let errs = { ...props.errors };
-		if (!isEmpty(value)) delete errs[name];
-		else errs[name] = `Please provide ${name} field`;
-		if (name === 'email' && !isEmpty(value)) {
-			if (!isEmail(value)) errs[name] = "Invalid email address";
-		}
-		props.setError(errs);
+		let errs = { ...errors };
+		errs[name] = GetErrorMessageOnChange(name, value, rules);
+		setError(errs);
 	}
 	const handleSubmit = evt => {
 		evt.preventDefault();
-		let errs = {};
-		if (!isEmail(email)) errs['email'] = "Invalid email address";
-		for (const item in user) {
-			if (isEmpty(user[item])) errs[item] = `Please provide ${item} field`;
-		}
+		let errs = GetErrorMessageOnSubmit(user, rules);
 		if (Object.keys(errs).length > 0) {
-			props.setError(errs);
-		} else props.login({ email, password });
+			setError(errs);
+		} else login({ email, password });
 	}
 	const classes = useStyles();
-	const { errors, loading } = props;
 	return <Container component="main" maxWidth="xs" className={classes.root}>
 		<div className={classes.paper}>
 			<Avatar className={classes.avatar}>
@@ -67,27 +63,17 @@ const Login = (props) => {
 	        </Typography>
 			<form onSubmit={handleSubmit} className={classes.form}>
 		        <div>
-					<TextField
-						name="email"
-		          		label="Email"
-		          		type="email"
-		          		variant="outlined"
-		          		value={email}
-		          		onChange={handleChange}
-		          		helperText={errors && errors.email ? errors.email : ''}
-		          		error={errors && errors.email ? true : false}
+					<TextField name="email" label="Email" type="email" variant="outlined"
+		          		value={email} onChange={handleChange}
+		          		helperText={errors.email}
+		          		error={errors.email ? true : false}
 		        	/>
 		        </div>
 		        <div>
-					<TextField
-						name="password"
-		          		label="Password"
-		          		type="password"
-		          		variant="outlined"
-		          		value={password}
-		          		onChange={handleChange}
-		          		helperText={errors && errors.password ? errors.password : ''}
-		          		error={errors && errors.password ? true : false}
+					<TextField name="password" label="Password" type="password" 
+						variant="outlined" value={password} onChange={handleChange}
+		          		helperText={errors.password}
+		          		error={errors.password ? true : false}
 		        	/>
 		        </div>
 		        <div className={classes.wrapError}>
