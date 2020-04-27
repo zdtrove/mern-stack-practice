@@ -10,21 +10,36 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: Number,
+        required: true
+    },
     password: {
         type: String,
         required: true
     },
     gender: {
         type: Number,
-        default: 1
+        required: true
     },
     location: {
         type: String,
-        default: "TP HCM"
+        required: true
     },
     role: {
         type: String,
         default: "user"
+    },
+    money: {
+        type: Number,
+        default: 0
+    },
+    isPremium: {
+        type: Boolean,
+        default: false
+    },
+    ability: {
+        type: [String]
     }
 });
 

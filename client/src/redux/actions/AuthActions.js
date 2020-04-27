@@ -167,6 +167,7 @@ export const clearError = () => dispatch => {
 
 export const logout = () => dispatch => {
 	dispatch({
-		type: LOGOUT
+		type: LOGOUT,
+		payload: {}
 	});
 }

@@ -21,11 +21,13 @@ export default {
         common: {
             root: {
                 '& .MuiTextField-root': {
-                    margin: theme.spacing(1),
                     width: '50ch'
                 },
                 '& .MuiFormHelperText-contained': {
                     marginLeft: 0
+                },
+                '& .MuiFormControl-root': {
+                    padding: '8px'
                 }
             },
             paper: {
