@@ -27,7 +27,7 @@ export default {
                     marginLeft: 0
                 },
                 '& .MuiFormControl-root': {
-                    padding: '8px'
+                    margin: '8px'
                 }
             },
             paper: {

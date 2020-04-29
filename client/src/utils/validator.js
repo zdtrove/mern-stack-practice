@@ -10,16 +10,20 @@ export const GetErrorMessageOnChange = (name, value, rules) => {
                     err = `Please provide ${name} field`;
                 }
             } else {
-                if (fieldName.require && isEmpty(value)) err = `Please provide ${fieldName.name} field`;
-                if (!isEmpty(value)) {
-                    if (fieldName.minLength && !isLength(value, {min: fieldName.minLength})) {
-                        err = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
-                    }
-                    if (fieldName.minLength && !isLength(value, {min: fieldName.minLength})) {
-                        err = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
-                    }
-                    if (fieldName.isEmail && !isEmail(value)) {
-                        err = "Invalid email address";
+                if (typeof value === 'boolean') {
+                    if (value === false) err = `Please provide ${fieldName.name} field`;
+                } else {
+                    if (fieldName.require && isEmpty(value)) err = `Please provide ${fieldName.name} field`;
+                    if (!isEmpty(value)) {
+                        if (fieldName.minLength && !isLength(value, {min: fieldName.minLength})) {
+                            err = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+                        }
+                        if (fieldName.minLength && !isLength(value, {min: fieldName.minLength})) {
+                            err = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+                        }
+                        if (fieldName.isEmail && !isEmail(value)) {
+                            err = "Invalid email address";
+                        }
                     }
                 }
             }
@@ -38,19 +42,25 @@ export const GetErrorMessageOnSubmit = (data, rules) => {
                 errs[key] = `Please provide ${fieldName.name} field`;
             }
         } else {
-            if (fieldName.require && isEmpty(data[key])) errs[key] = `Please provide ${fieldName.name} field`;
-            if (!isEmpty(fieldValue)) {
-                if (fieldName.minLength && !isLength(fieldValue, {min: fieldName.minLength})) {
-                    errs[key] = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+            if (typeof fieldValue === 'boolean') {
+                if (fieldValue === false) errs[key] = `Please provide ${fieldName.name} field`;
+            } else {
+                if (fieldName.require && isEmpty(fieldValue)) {
+                    if (isEmpty(fieldValue)) errs[key] = `Please provide ${fieldName.name} field`;
                 }
-                if (fieldName.minLength && !isLength(fieldValue, {min: fieldName.minLength})) {
-                    errs[key] = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
-                }
-                if (fieldName.isEmail && !isEmail(fieldValue)) {
-                    errs[key] = "Invalid email address";
-                }
-                if (fieldName.match && fieldValue !== data[fieldName.match]) {
-                    errs[key] = `${fieldName.name} does not match ${rules[fieldName.match].name}`;
+                if (!isEmpty(fieldValue)) {
+                    if (fieldName.minLength && !isLength(fieldValue, {min: fieldName.minLength})) {
+                        errs[key] = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+                    }
+                    if (fieldName.minLength && !isLength(fieldValue, {min: fieldName.minLength})) {
+                        errs[key] = `Please provide ${fieldName.minLength} character long ${fieldName.name}`;
+                    }
+                    if (fieldName.isEmail && !isEmail(fieldValue)) {
+                        errs[key] = "Invalid email address";
+                    }
+                    if (fieldName.match && fieldValue !== data[fieldName.match]) {
+                        errs[key] = `${fieldName.name} does not match ${rules[fieldName.match].name}`;
+                    }
                 }
             }
         }

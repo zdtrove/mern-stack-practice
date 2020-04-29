@@ -47,9 +47,10 @@ const Register = (props) => {
 		password: '',
 		passwordConfirm: ''
 	});
-	const { userName, email, phone, gender, location, money, role, isPremium, ability, password, passwordConfirm } = user;
+	const { userName, email, phone, location, money, role, isPremium, ability, password, passwordConfirm } = user;
 	const rules = {
 		userName: { name: 'Username', require: true, minLength: 3, maxLength: 24 },
+		isPremium: { name: 'Premium', require: true },
 		email: { name: 'Email', require: true, isEmail: true },
 		phone: { name: 'Phone Number', require: true, isPhone: true, minLength: 10, maxLength: 12 },
 		gender: { name: 'Gender', require: true },
@@ -59,7 +60,8 @@ const Register = (props) => {
 		passwordConfirm: { name: 'Password Confirm', require: true, minLength: 6, maxLength: 32, match: 'password' }
 	}
 	const handleChange = evt => {
-		const { name, value } = evt.target;
+		const { name } = evt.target;
+		const value = evt.target.type === 'checkbox' ? evt.target.checked : evt.target.value;
 		setUser({
 			...user,
 			[name]: value
