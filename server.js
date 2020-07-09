@@ -13,7 +13,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 // Connect MongoDB
-mongoose.connect(MONGODB_URL_LOCAL, {
+mongoose.connect(MONGODB_URL_SERVER, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }, () => console.log('Connected to MongoDB'));
